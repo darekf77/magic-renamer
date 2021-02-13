@@ -30,8 +30,8 @@
     "main": "index.js"
   },
   "name": "magic-renamer",
-  "version": "0.0.0",
-  "license": "UNLICENSED",
+  "version": "0.0.1",
+  "license": "MIT",
   "main": "index.js",
   "dependencies": {
     "tnp-helpers": "~0.0.12"
@@ -261,7 +261,7 @@
     "webpack-cli": "3.3.11",
     "zone.js": "~0.10.2"
   },
-  "private": true,
+  "private": false,
   "husky": {
     "hooks": {
       "pre-push": "tnp deps:show:if:standalone"
