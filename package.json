@@ -270,5 +270,6 @@
   "bin": {
     "magic-renamer": "bin/magic-renamer",
     "magic-renamer-debug": "bin/magic-renamer-debug"
-  }
+  },
+  "lastBuildTagHash": "e42dcc393a01630dd667ed65fa8809591ef16481"
 }
