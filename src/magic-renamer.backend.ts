@@ -1,8 +1,5 @@
-import chalk from 'chalk';
-import * as path from 'path';
-import * as fse from 'fs-extra';
-import * as glob from 'glob';
-import * as _ from 'lodash';
+import { _, path, fse, glob } from 'tnp-core';
+
 import { Helpers } from 'tnp-helpers';
 import { RenameRule } from './rename-rule';
 
