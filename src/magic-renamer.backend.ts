@@ -18,11 +18,12 @@ export class MagicRenamer {
   //#endregion
   rules: RenameRule[] = [];
 
-  start(pArgs: string) {
+  start(pArgs: string, copyIfFolder = false) {
     Helpers.info('Rebranding of files');
 
-    const relativePath = _.first(pArgs.split(' '));
+    let relativePath = _.first(pArgs.split(' '));
     pArgs = pArgs.replace(relativePath, '');
+    pArgs = pArgs.replace(/\=\>/g, '->');
     let args = pArgs.split(/(\'|\")(\ )+(\'|\")/).filter(f => !!f) as string[];
     Helpers.log('---- Rules ----');
     // args.forEach(a => {
@@ -41,7 +42,23 @@ export class MagicRenamer {
         return new RenameRule(from.trim(), to.trim());
       });
 
+    if (this.rules.length === 0) {
+      Helpers.error(`[magic-renamer] Plase provide rules:
+
+      example:
+      <command> 'my-module -> my-new-modules'
+
+      `)
+    }
+
+
     let folder = path.join(this.cwd, relativePath);
+    let originalContent: string;
+    if (copyIfFolder) {
+      const newRelativePath = path.join(path.dirname(relativePath), `_${path.basename(relativePath)}`);
+      originalContent = path.join(this.cwd, newRelativePath);
+      Helpers.copy(folder, originalContent);
+    }
     // Helpers.info(folder)
     let files = getAllFilesFoldersRecusively(folder);
     // Helpers.info(`files:\n ${files.map(f => f.replace(folder, '')).join('\n')}`);
@@ -54,7 +71,11 @@ export class MagicRenamer {
     };
     this.changeFiles(files, starCallback);
     files = getAllFilesFoldersRecusively(folder, true);
-    this.changeContent(files)
+    this.changeContent(files);
+    if (originalContent) {
+      const orgFolder = path.join(path.dirname(originalContent), path.basename(originalContent).replace(/\_/, ''));
+      Helpers.move(originalContent, orgFolder);
+    }
   }
 
   changeFiles(files: string[] = [], startProcessAgain: (newFolder: string) => any, isFirstCall = true) {
