@@ -30,11 +30,11 @@
     "main": "index.js"
   },
   "name": "magic-renamer",
-  "version": "0.0.6",
-  "license": "UNLICENSED",
+  "version": "0.0.7",
+  "license": "MIT",
   "main": "index.js",
   "dependencies": {
-    "tnp-helpers": "~0.0.30"
+    "tnp-helpers": "~0.0.32"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "0.901.3",
@@ -245,7 +245,7 @@
     "task.js": "0.1.5",
     "tnp-cli": "~0.0.13",
     "tnp-config": "~0.0.62",
-    "tnp-core": "~0.0.18",
+    "tnp-core": "~0.0.19",
     "tnp-db": "~0.0.24",
     "tnp-models": "~0.0.25",
     "tnp-tools": "0.0.35",
@@ -269,7 +269,7 @@
     "webpack-cli": "3.3.11",
     "zone.js": "0.10.2"
   },
-  "private": true,
+  "private": false,
   "husky": {
     "hooks": {
       "pre-push": "tnp deps:show:if:standalone"
