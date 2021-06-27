@@ -1,6 +1,6 @@
 import { _, path, fse, glob } from 'tnp-core';
 
-import { Helpers } from 'tnp-helpers';
+import { Helpers, Project } from 'tnp-helpers';
 import { RenameRule } from './rename-rule';
 
 export class MagicRenamer {
@@ -10,6 +10,10 @@ export class MagicRenamer {
     private readonly cwd: string
   ) { }
   public static Instance(cwd = process.cwd()) {
+    const nearestProject = Project.nearestTo(cwd);
+    if (nearestProject) {
+      cwd = nearestProject.location;
+    }
     if (!MagicRenamer._instances[cwd]) {
       MagicRenamer._instances[cwd] = new MagicRenamer(cwd);
     }
@@ -21,14 +25,17 @@ export class MagicRenamer {
   start(pArgs: string, copyIfFolder = false) {
     Helpers.info('Rebranding of files');
 
+    let options = Helpers.cliTool.argsFrom<{}>(pArgs);
+    pArgs = Helpers.cliTool.cleanCommand(pArgs, options);
+
     let relativePath = _.first(pArgs.split(' '));
     pArgs = pArgs.replace(relativePath, '');
     pArgs = pArgs.replace(/\=\>/g, '->');
     let args = pArgs.split(/(\'|\")(\ )+(\'|\")/).filter(f => !!f) as string[];
     Helpers.log('---- Rules ----');
-    // args.forEach(a => {
-    //   Helpers.log(a)
-    // });
+    args.forEach(a => {
+      Helpers.log(a)
+    });
     Helpers.log('---------------');
     this.rules = args
       .filter(a => a.search('->') !== -1)
@@ -50,7 +57,6 @@ export class MagicRenamer {
 
       `)
     }
-
 
     let folder = path.join(this.cwd, relativePath);
     let originalContent: string;
@@ -83,12 +89,12 @@ export class MagicRenamer {
       return;
     }
     let file = files.shift();
-    Helpers.log(`Processing file: ${path.basename(file)}`)
+    // Helpers.log(`Processing file: ${path.basename(file)}`)
     const fileName = path.basename(file);
     for (let index = 0; index < this.rules.length; index++) {
       const r = this.rules[index];
       // Helpers.log(`Checking rule ${r}`)
-      if (r.applyTo(fileName)) {
+      if (r.applyTo(fileName) && !r.includes(fileName)) {
         // Helpers.log(`Apply to: ${fileName}`);
         const dest = path.join(path.dirname(file), r.replace(fileName));
         // Helpers.log(`des ${dest}`);
@@ -96,7 +102,7 @@ export class MagicRenamer {
         file = dest;
         if (path.extname(dest) === '') {
           files.length = 0;
-          Helpers.info(`Starting process again from: ${dest}`)
+          // Helpers.info(`Starting process again from: ${dest}`)
           startProcessAgain(isFirstCall ? dest : void 0);
           return false;
         }
@@ -113,15 +119,15 @@ export class MagicRenamer {
       return;
     }
     const file = files.shift();
-    Helpers.log(`Processing content of file: ${path.basename(file)}`)
+    // Helpers.log(`Processing content of file: ${path.basename(file)}`)
     const fileContent = Helpers.readFile(file);
     this.rules.forEach(r => {
-      // Helpers.log(`Checking rule ${r}`)
+      Helpers.log(`Checking rule ${r}`)
       if (r.applyTo(fileContent)) {
-        // Helpers.log(`Apply to: ${fileContent}`);
-        Helpers.writeFile(file, r.replace(fileContent));
+        Helpers.log(`Apply to: ${fileContent}`);
+        Helpers.writeFile(file, r.replace(fileContent, true));
       } else {
-        // Helpers.log(`Not apply to: ${fileContent}`);
+        Helpers.log(`Not apply to: ${fileContent}`);
       }
     });
     this.changeContent(files);
