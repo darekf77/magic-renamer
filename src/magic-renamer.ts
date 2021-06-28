@@ -1,9 +1,14 @@
+//#region imports
+//#region @backend
 import { _, path, fse, glob } from 'tnp-core';
-
 import { Helpers, Project } from 'tnp-helpers';
-import { RenameRule } from './rename-rule';
+import { RenameRule } from './rename-rule.backend';
+//#endregion
+//#endregion
 
 export class MagicRenamer {
+  //#region @backend
+
   //#region singleton
   private static _instances = {};
   private constructor(
@@ -20,8 +25,14 @@ export class MagicRenamer {
     return MagicRenamer._instances[cwd] as MagicRenamer;
   }
   //#endregion
-  rules: RenameRule[] = [];
 
+  //#region fields
+  readonly rules: RenameRule[] = [];
+  //#endregion
+
+  //#region public api
+
+  //#region public api / start
   start(pArgs: string, copyIfFolder = false) {
     Helpers.info('Rebranding of files');
 
@@ -37,7 +48,7 @@ export class MagicRenamer {
       Helpers.log(a)
     });
     Helpers.log('---------------');
-    this.rules = args
+    args
       .filter(a => a.search('->') !== -1)
       .map(a => {
         const [from, to] = a.split('->')
@@ -47,6 +58,9 @@ export class MagicRenamer {
         please follow pattern: 'test name -> my new name '`, false, true);
         }
         return new RenameRule(from.trim(), to.trim());
+      })
+      .forEach(rule => {
+        this.rules.push(rule)
       });
 
     if (this.rules.length === 0) {
@@ -83,8 +97,12 @@ export class MagicRenamer {
       Helpers.move(originalContent, orgFolder);
     }
   }
+  //#endregion
 
-  changeFiles(files: string[] = [], startProcessAgain: (newFolder: string) => any, isFirstCall = true) {
+  //#endregion
+
+  //#region private methods
+  private changeFiles(files: string[] = [], startProcessAgain: (newFolder: string) => any, isFirstCall = true) {
     if (files.length === 0) {
       return;
     }
@@ -114,7 +132,7 @@ export class MagicRenamer {
     return this.changeFiles(_.cloneDeep(files), startProcessAgain, false);
   }
 
-  changeContent(files: string[] = []) {
+  private changeContent(files: string[] = []) {
     if (files.length === 0) {
       return;
     }
@@ -132,8 +150,12 @@ export class MagicRenamer {
     });
     this.changeContent(files);
   }
+  //#endregion
+
+  //#endregion
 }
 
+//#region @backend
 function getAllFilesFoldersRecusively(folder: string, filesOnly = false) {
   let files = glob.sync(`${folder}/**/*.*`);
   if (!filesOnly) {
@@ -149,4 +171,4 @@ function getAllFilesFoldersRecusively(folder: string, filesOnly = false) {
   }
   return files.sort();
 }
-
+//#endregion

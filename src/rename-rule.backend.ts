@@ -1,12 +1,14 @@
 import { Helpers, _ } from 'tnp-core';
 
 export class RenameRule {
+  //#region fields
   public readonly from: string;
   public readonly to: string;
   org = {
     from: void 0 as string,
     to: void 0 as string,
   }
+  //#endregion
 
   constructor(
     from: string,
