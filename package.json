@@ -31,7 +31,7 @@
   },
   "name": "magic-renamer",
   "version": "0.0.11",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "main": "index.js",
   "dependencies": {
     "tnp-helpers": "~0.0.37"
@@ -180,7 +180,7 @@
     "lodash": "4.17.4",
     "lodash-walk-object": "~1.0.20",
     "lowdb": "1.0.0",
-    "magic-renamer": "~0.0.11",
+    "magic-renamer": "~0.0.9",
     "material-design-icons": "3.0.1",
     "method-override": "2.3.10",
     "minimist": "1.2.0",
