@@ -175,7 +175,7 @@
     "lodash": "4.17.4",
     "lodash-walk-object": "~1.0.31",
     "lowdb": "1.0.0",
-    "magic-renamer": "~0.0.16",
+    "magic-renamer": "~0.0.17",
     "material-design-icons": "3.0.1",
     "method-override": "2.3.10",
     "minimist": "1.2.0",
@@ -265,5 +265,5 @@
     "magic-renamer": "bin/magic-renamer",
     "magic-renamer-debug": "bin/magic-renamer-debug"
   },
-  "lastBuildTagHash": "621a18a6431b4d83e8211e66d1b82085bdb12143"
+  "lastBuildTagHash": "0d90d4355d61bed7bd4d166c4da180cd7c7a7f78"
 }
