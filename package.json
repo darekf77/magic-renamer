@@ -266,5 +266,8 @@
     "magic-renamer": "bin/magic-renamer",
     "magic-renamer-debug": "bin/magic-renamer-debug"
   },
-  "lastBuildTagHash": "5b771b397c789b2c6ebad5eecd59723262a14b08"
+  "lastBuildTagHash": "5b771b397c789b2c6ebad5eecd59723262a14b08",
+  "recreatedFrom": {
+    "tnp.json": true
+  }
 }
