@@ -1,7 +1,7 @@
 {
   "name": "magic-renamer",
   "version": "13.0.10",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "main": "index.js",
   "dependencies": {
     "tnp-helpers": "~13.0.25"
