@@ -1,4 +1,4 @@
-import { MagicRenamer } from './magic-renamer';
+import { MagicRenamer } from './lib/magic-renamer';
 
 export async function run(args: string[]) {
   const ins = MagicRenamer.Instance();
