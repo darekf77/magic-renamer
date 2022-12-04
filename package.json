@@ -11,7 +11,7 @@
     "magic-renamer": "bin/magic-renamer",
     "magic-renamer-debug": "bin/magic-renamer-debug"
   },
-  "lastBuildTagHash": "5c6192dbfa50f55a887fa3f293add81fcdaa63e3",
+  "lastBuildTagHash": "3fdab520af234e3378240edaf5e05870997d6a67",
   "devDependencies": {
     "@angular-devkit/build-angular": "~13.3.9",
     "@angular-devkit/core": "~13.3.9",
@@ -165,7 +165,7 @@
     "lodash.merge": ">= 4",
     "lodash.set": ">= 4",
     "lowdb": "^1.0.0",
-    "magic-renamer": "~13.1.15",
+    "magic-renamer": "~13.1.16",
     "material-design-icons": "3.0.1",
     "method-override": "^2.3.10",
     "minimist": "^1.2.0",
