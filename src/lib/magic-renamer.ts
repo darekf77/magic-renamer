@@ -39,7 +39,7 @@ export class MagicRenamer {
 
     // let relativePath = _.first(pArgs.split(' '));
     // pArgs = pArgs.replace(relativePath, '');
-    pArgs = pArgs.replace(/\=\>/g, '->');
+    pArgs = decodeURIComponent(pArgs).replace(/\=\>/g, '->');
     let args = pArgs.split(/(\'|\")(\ )+(\'|\")/).filter(f => !!f) as string[];
     Helpers.log('---- Rules ----');
     args.forEach(a => {
