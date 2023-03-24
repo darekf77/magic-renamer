@@ -1,7 +1,7 @@
 //#region imports
 //#region @backend
-import { _, path, fse, glob } from 'tnp-core';
-import { Helpers, Project } from 'tnp-helpers';
+import { _, path, fse, glob, crossPlatformPath } from 'tnp-core';
+import { Helpers } from 'tnp-helpers';
 import { RenameRule } from './rename-rule.backend';
 //#endregion
 //#endregion
@@ -15,10 +15,7 @@ export class MagicRenamer {
     private readonly cwd: string
   ) { }
   public static Instance(cwd = process.cwd()) {
-    const nearestProject = Project.nearestTo(cwd);
-    if (nearestProject) {
-      cwd = nearestProject.location;
-    }
+    cwd = crossPlatformPath(cwd);
     if (!MagicRenamer._instances[cwd]) {
       MagicRenamer._instances[cwd] = new MagicRenamer(cwd);
     }
@@ -34,13 +31,14 @@ export class MagicRenamer {
 
   //#region public api / start
   start(pArgs: string, copyIfFolder = false) {
+    const orgArgs = pArgs;
     Helpers.info('Rebranding of files');
 
-    let options = Helpers.cliTool.argsFrom<{}>(pArgs);
-    pArgs = Helpers.cliTool.cleanCommand(pArgs, options);
+    // let options = Helpers.cliTool.argsFrom<{}>(pArgs);
+    // pArgs = Helpers.cliTool.cleanCommand(pArgs, options);
 
-    let relativePath = _.first(pArgs.split(' '));
-    pArgs = pArgs.replace(relativePath, '');
+    // let relativePath = _.first(pArgs.split(' '));
+    // pArgs = pArgs.replace(relativePath, '');
     pArgs = pArgs.replace(/\=\>/g, '->');
     let args = pArgs.split(/(\'|\")(\ )+(\'|\")/).filter(f => !!f) as string[];
     Helpers.log('---- Rules ----');
@@ -64,45 +62,55 @@ export class MagicRenamer {
       });
 
     if (this.rules.length === 0) {
-      Helpers.error(`[magic-renamer] Plase provide rules:
-
+      // console.log({
+      //   pArgs
+      // })
+      Helpers.error(`[magic-renamer] Please provide rules:
       example:
       <command> 'my-module -> my-new-modules'
+      your args: "${orgArgs}"
 
       `)
     }
 
-    let folder = path.join(this.cwd, relativePath);
-    let originalContent: string;
-    if (copyIfFolder) {
-      const newRelativePath = path.join(path.dirname(relativePath), `_${path.basename(relativePath)}`);
-      originalContent = path.join(this.cwd, newRelativePath);
-      Helpers.copy(folder, originalContent);
-    }
+    // relativePath = crossPlatformPath(relativePath);
+    let folder = this.cwd;
+    // let originalContent: string;
+    // if (copyIfFolder) {
+    // const newFolder = crossPlatformPath(path.join(
+    //   path.dirname(this.cwd),
+    //   `_${path.basename(this.cwd)}`,
+    // ));
+    // Helpers.copy(folder, newFolder);
+    // folder = newFolder;
+    // }
     // Helpers.info(folder)
-    let files = getAllFilesFoldersRecusively(folder);
+    let files = getAllFilesFoldersRecusively(folder); //filter(f => crossPlatformPath(f) === folder)
     // Helpers.info(`files:\n ${files.map(f => f.replace(folder, '')).join('\n')}`);
     const starCallback = newFolder => {
       if (newFolder) {
         folder = newFolder;
       }
       files = getAllFilesFoldersRecusively(folder);
-      this.changeFiles(files, starCallback);
+      this.changeFiles(folder, files, starCallback);
     };
-    this.changeFiles(files, starCallback);
+    this.changeFiles(folder, files, starCallback);
     files = getAllFilesFoldersRecusively(folder, true);
     this.changeContent(files);
-    if (originalContent) {
-      const orgFolder = path.join(path.dirname(originalContent), path.basename(originalContent).replace(/\_/, ''));
-      Helpers.move(originalContent, orgFolder);
-    }
+    // if (originalContent) {
+    //   const orgFolder = crossPlatformPath(path.join(
+    //     crossPlatformPath(path.dirname(originalContent)),
+    //     crossPlatformPath(path.basename(originalContent)).replace(/\_/, ''),
+    //   ));
+    //   Helpers.move(originalContent, orgFolder);
+    // }
   }
   //#endregion
 
   //#endregion
 
   //#region private methods
-  private changeFiles(files: string[] = [], startProcessAgain: (newFolder: string) => any, isFirstCall = true) {
+  private changeFiles(folder: string, files: string[] = [], startProcessAgain: (newFolder: string) => any, isFirstCall = true) {
     if (files.length === 0) {
       return;
     }
@@ -114,9 +122,16 @@ export class MagicRenamer {
       // Helpers.log(`Checking rule ${r}`)
       if (r.applyTo(fileName) && !r.includes(fileName)) {
         // Helpers.log(`Apply to: ${fileName}`);
-        const dest = path.join(path.dirname(file), r.replace(fileName));
+        const dest = crossPlatformPath(path.join(
+          path.dirname(file),
+          r.replace(fileName)),
+        );
         // Helpers.log(`des ${dest}`);
-        Helpers.move(file, dest);
+        if (crossPlatformPath(file) === folder) {
+          Helpers.copy(file, dest);
+        } else {
+          Helpers.move(file, dest);
+        }
         file = dest;
         if (path.extname(dest) === '') {
           files.length = 0;
@@ -129,7 +144,7 @@ export class MagicRenamer {
         // Helpers.log(`Not apply to: ${fileName}`);
       }
     }
-    return this.changeFiles(_.cloneDeep(files), startProcessAgain, false);
+    return this.changeFiles(folder, _.cloneDeep(files), startProcessAgain, false);
   }
 
   private changeContent(files: string[] = []) {
@@ -161,9 +176,11 @@ function getAllFilesFoldersRecusively(folder: string, filesOnly = false) {
   if (!filesOnly) {
     let dirs = [folder]
     files.forEach(filePath => {
-      const p = path.dirname(filePath);
+      const p = crossPlatformPath(path.dirname(filePath));
       dirs = dirs.concat(
-        fse.readdirSync(p).filter(f => fse.statSync(path.join(p, f)).isDirectory()).map(f => path.join(p, f))
+        fse.readdirSync(p)
+          .filter(f => fse.statSync(crossPlatformPath(path.join(p, f))).isDirectory())
+          .map(f => crossPlatformPath(path.join(p, f)))
       );
     });
     files = files.concat(dirs);
