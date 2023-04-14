@@ -169,7 +169,7 @@
     "lodash.merge": ">= 4",
     "lodash.set": ">= 4",
     "lowdb": "1.0.0",
-    "magic-renamer": "~13.1.23",
+    "magic-renamer": "~13.1.24",
     "material-design-icons": "3.0.1",
     "method-override": "2.3.10",
     "minimist": "1.2.0",
@@ -247,5 +247,5 @@
     "zone.js": "~0.11.4"
   },
   "private": false,
-  "lastBuildTagHash": "43a60c64d95108c5b5f521f3d502a2c9f7b69ce4"
+  "lastBuildTagHash": "3b2bef365d8fe26da22bf7a54a44638379144d2b"
 }
