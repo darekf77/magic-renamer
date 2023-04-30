@@ -1,6 +1,6 @@
 {
   "name": "magic-renamer",
-  "version": "13.1.29",
+  "version": "13.1.30",
   "main": "index.js",
   "bin": {
     "magic-renamer": "bin/magic-renamer",
