@@ -32,7 +32,7 @@ export class MagicRenamer {
   //#region public api / start
   start(pArgs: string, copyIfFolder = false) {
     const orgArgs = pArgs;
-    Helpers.info('Rebranding of files');
+    Helpers.info('\n\n\nRebranding of files');
 
     // let options = Helpers.cliTool.argsFrom<{}>(pArgs);
     // pArgs = Helpers.cliTool.cleanCommand(pArgs, options);
@@ -104,6 +104,7 @@ export class MagicRenamer {
     //   ));
     //   Helpers.move(originalContent, orgFolder);
     // }
+    console.log('PROCESS DONE')
   }
   //#endregion
 
@@ -157,10 +158,10 @@ export class MagicRenamer {
     this.rules.forEach(r => {
       Helpers.log(`Checking rule ${r}`)
       if (r.applyTo(fileContent)) {
-        Helpers.log(`Apply to: ${fileContent}`);
+        // Helpers.log(`Apply to: ${fileContent}`);
         Helpers.writeFile(file, r.replace(fileContent, true));
       } else {
-        Helpers.log(`Not apply to: ${fileContent}`);
+        // Helpers.log(`Not apply to: ${fileContent}`);
       }
     });
     this.changeContent(files);

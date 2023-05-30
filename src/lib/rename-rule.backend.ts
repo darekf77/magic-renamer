@@ -42,14 +42,14 @@ export class RenameRule {
     const thisFrom = this.from;
     return [
       // TODO 'rs.asdasd-asd-A.'
-      [_.kebabCase(thisFrom), _.kebabCase(thisTo)],
-      [_.camelCase(thisFrom), _.camelCase(thisTo)],
-      [_.upperFirst(_.camelCase(thisFrom)), _.upperFirst(_.camelCase(thisTo))],
-      [_.lowerFirst(_.camelCase(thisFrom)), _.lowerFirst(_.camelCase(thisTo))],
-      [_.snakeCase(thisFrom), _.snakeCase(thisTo)],
-      [_.startCase(thisFrom), _.startCase(thisTo)],
-      [_.upperCase(thisFrom), _.upperCase(thisTo)],
-      [_.lowerCase(thisFrom), _.lowerCase(thisTo)],
+      [_.kebabCase(thisFrom), _.kebabCase(thisTo)],  // my-entity => hello-kitty
+      [_.camelCase(thisFrom), _.camelCase(thisTo)],  // myEntity => helloKitty
+      [_.upperFirst(_.camelCase(thisFrom)), _.upperFirst(_.camelCase(thisTo))], // MyEntity => HelloKitty
+      // [_.lowerFirst(_.camelCase(thisFrom)), _.lowerFirst(_.camelCase(thisTo))], // myEntity => helloKitty
+      [_.snakeCase(thisFrom), _.snakeCase(thisTo)],  // my_entity => hello_kitty
+      [_.startCase(thisFrom), _.startCase(thisTo)], // My Entity => Hello Kitty
+      [_.upperCase(thisFrom), _.upperCase(thisTo)], // MY ENTITY => HELLO KITTY
+      [_.lowerCase(thisFrom), _.lowerCase(thisTo)], // my entity => hello kitty
     ];
   }
 
