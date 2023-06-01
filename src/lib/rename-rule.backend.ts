@@ -1,29 +1,28 @@
-import { Helpers, _ } from 'tnp-core';
+import { Helpers } from 'tnp-helpers';
+import { _ } from 'tnp-core';
+import { Log, Level } from 'ng2-logger';
+const log = Log.create('magic-renemer',
+  Level.__NOTHING
+)
+
 
 export class RenameRule {
-  //#region fields
-  public readonly from: string;
-  public readonly to: string;
-  org = {
-    from: void 0 as string,
-    to: void 0 as string,
-  }
-  //#endregion
 
+  public readonly fromWhiteSpaceReplaced: string;
+  public readonly toWhiteSpaceReplaced: string;
   constructor(
-    from: string,
-    to: string,
+    public readonly from: string,
+    public readonly to: string,
 
   ) {
-    this.org.from = from;
-    this.org.to = to;
-    this.from = from.trim().toLowerCase().replace(/\W/g, ' ')
-    this.to = to.trim().toLowerCase().replace(/\W/g, ' ')
+    this.fromWhiteSpaceReplaced = from.trim().toLowerCase().replace(/\W/g, ' ')
+    this.toWhiteSpaceReplaced = to.trim().toLowerCase().replace(/\W/g, ' ')
   }
 
   applyTo(s: string): boolean {
     s = s.trim().toLowerCase().replace(/\W/g, '')
-    return (s.search(this.from.replace(/\W/g, '')) !== -1);
+    const res = (s.search(this.from.replace(/\W/g, '')) !== -1);
+    return res;
   }
 
   toString = () => {
@@ -38,14 +37,13 @@ export class RenameRule {
   }
 
   get combinations() {
-    const thisTo = this.to;
-    const thisFrom = this.from;
+    const thisTo = this.toWhiteSpaceReplaced;
+    const thisFrom = this.fromWhiteSpaceReplaced;
     return [
       // TODO 'rs.asdasd-asd-A.'
       [_.kebabCase(thisFrom), _.kebabCase(thisTo)],  // my-entity => hello-kitty
       [_.camelCase(thisFrom), _.camelCase(thisTo)],  // myEntity => helloKitty
       [_.upperFirst(_.camelCase(thisFrom)), _.upperFirst(_.camelCase(thisTo))], // MyEntity => HelloKitty
-      // [_.lowerFirst(_.camelCase(thisFrom)), _.lowerFirst(_.camelCase(thisTo))], // myEntity => helloKitty
       [_.snakeCase(thisFrom), _.snakeCase(thisTo)],  // my_entity => hello_kitty
       [_.startCase(thisFrom), _.startCase(thisTo)], // My Entity => Hello Kitty
       [_.upperCase(thisFrom), _.upperCase(thisTo)], // MY ENTITY => HELLO KITTY
@@ -53,43 +51,26 @@ export class RenameRule {
     ];
   }
 
-  replace(orgString: string, all = false) {
-    if (all) {
-      this.combinations.find((v) => {
-        let [from, to] = v;
-        if (orgString.search(from) !== -1 && orgString.search(to) === -1) {
-          orgString = orgString.replace(new RegExp(from, 'g'), to);
-        } else {
-          from = from.replace(/\s/g, '');
-          to = to.replace(/\s/g, '');
-          if (orgString.search(from) !== -1 && orgString.search(to) === -1) {
-            orgString = orgString.replace(new RegExp(from, 'g'), to);
-          }
-        }
-      });
-      return orgString;
-    }
+  /**
+   *
+   * @param orgString (file name OR file content)
+   * @param replaceallPossibliliteis when changin file notent (not name only)
+   * @returns
+   */
+  replace(filename: string, orgString: string, replaceallPossibliliteis = false) {
 
-    const founded = this.combinations.find((v) => {
+    const combinations = this.combinations;
+    for (let index = 0; index < combinations.length; index++) {
+      const v = combinations[index];
       let [from, to] = v;
-      // console.log(`${from} => ${to}`)
       if (orgString.search(from) !== -1) {
-        orgString = orgString.replace(new RegExp(from, 'g'), to);
-        return true;
+        const regex = new RegExp(Helpers.escapeStringForRegEx(from));
+        log.i(`apply! "${regex.source}" to file ${filename} => "${to}"`)
+        orgString = orgString.replace(new RegExp(Helpers.escapeStringForRegEx(from), 'g'), to);
+        if (!replaceallPossibliliteis) {
+          return orgString;
+        }
       }
-      from = from.replace(/\s/g, '');
-      to = to.replace(/\s/g, '');
-      // console.log(`${from} => ${to}`)
-      if (orgString.search(from) !== -1) {
-        orgString = orgString.replace(new RegExp(from, 'g'), to);
-        return true;
-      }
-      return false;
-    });
-    if (_.isUndefined(founded)) {
-      Helpers.log(`[magic-renamer][magic-rule][replace] not match for ${orgString}`);
-    } else {
-      Helpers.log(`[magic-renamer][magic-rule][replace] match on "${founded.toString()}" for ${orgString}`);
     }
     return orgString;
   }

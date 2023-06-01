@@ -1,7 +1,14 @@
 //#region imports
+import { Log, Level } from 'ng2-logger';
+const log = Log.create('magic-renemer',
+  Level.__NOTHING
+)
+
+
 //#region @backend
 import { _, path, fse, glob, crossPlatformPath } from 'tnp-core';
 import { Helpers } from 'tnp-helpers';
+import { shouldDebug } from './magic-renamer-data';
 import { RenameRule } from './rename-rule.backend';
 //#endregion
 //#endregion
@@ -41,11 +48,11 @@ export class MagicRenamer {
     // pArgs = pArgs.replace(relativePath, '');
     pArgs = decodeURIComponent(pArgs).replace(/\=\>/g, '->');
     let args = pArgs.split(/(\'|\")(\ )+(\'|\")/).filter(f => !!f) as string[];
-    Helpers.log('---- Rules ----');
+    log.d('---- Rules ----');
     args.forEach(a => {
-      Helpers.log(a)
+      log.d(a)
     });
-    Helpers.log('---------------');
+    log.d('---------------');
     args
       .filter(a => a.search('->') !== -1)
       .map(a => {
@@ -73,20 +80,10 @@ export class MagicRenamer {
       `)
     }
 
-    // relativePath = crossPlatformPath(relativePath);
     let folder = this.cwd;
-    // let originalContent: string;
-    // if (copyIfFolder) {
-    // const newFolder = crossPlatformPath(path.join(
-    //   path.dirname(this.cwd),
-    //   `_${path.basename(this.cwd)}`,
-    // ));
-    // Helpers.copy(folder, newFolder);
-    // folder = newFolder;
-    // }
-    // Helpers.info(folder)
     let files = getAllFilesFoldersRecusively(folder); //filter(f => crossPlatformPath(f) === folder)
-    // Helpers.info(`files:\n ${files.map(f => f.replace(folder, '')).join('\n')}`);
+    Helpers.info(`files:\n ${files.map(f => f.replace(folder, '')).join('\n')}`);
+
     const starCallback = newFolder => {
       if (newFolder) {
         folder = newFolder;
@@ -94,16 +91,10 @@ export class MagicRenamer {
       files = getAllFilesFoldersRecusively(folder);
       this.changeFiles(folder, files, starCallback);
     };
+
     this.changeFiles(folder, files, starCallback);
     files = getAllFilesFoldersRecusively(folder, true);
     this.changeContent(files);
-    // if (originalContent) {
-    //   const orgFolder = crossPlatformPath(path.join(
-    //     crossPlatformPath(path.dirname(originalContent)),
-    //     crossPlatformPath(path.basename(originalContent)).replace(/\_/, ''),
-    //   ));
-    //   Helpers.move(originalContent, orgFolder);
-    // }
     console.log('PROCESS DONE')
   }
   //#endregion
@@ -116,33 +107,33 @@ export class MagicRenamer {
       return;
     }
     let file = files.shift();
-    // Helpers.log(`Processing file: ${path.basename(file)}`)
+    log.d(`Processing file: ${path.basename(file)}`)
     const fileName = path.basename(file);
     for (let index = 0; index < this.rules.length; index++) {
       const r = this.rules[index];
-      // Helpers.log(`Checking rule ${r}`)
+      // log.d(`Checking rule ${r}`)
       if (r.applyTo(fileName) && !r.includes(fileName)) {
-        // Helpers.log(`Apply to: ${fileName}`);
-        const dest = crossPlatformPath(path.join(
+        log.d(`Apply to: ${fileName}`);
+        const destChangedToNewName = crossPlatformPath(path.join(
           path.dirname(file),
-          r.replace(fileName)),
+          r.replace(fileName, fileName)),
         );
-        // Helpers.log(`des ${dest}`);
+        log.d(`des ${destChangedToNewName}`);
         if (crossPlatformPath(file) === folder) {
-          Helpers.copy(file, dest);
+          Helpers.copy(file, destChangedToNewName);
         } else {
-          Helpers.move(file, dest);
+          Helpers.move(file, destChangedToNewName);
         }
-        file = dest;
-        if (path.extname(dest) === '') {
+        file = destChangedToNewName;
+        if (path.extname(destChangedToNewName) === '') {
           files.length = 0;
-          // Helpers.info(`Starting process again from: ${dest}`)
-          startProcessAgain(isFirstCall ? dest : void 0);
+          log.d(`Starting process again from: ${destChangedToNewName}`)
+          startProcessAgain(isFirstCall ? destChangedToNewName : void 0);
           return false;
         }
 
       } else {
-        // Helpers.log(`Not apply to: ${fileName}`);
+        log.d(`Not apply to: ${fileName}`);
       }
     }
     return this.changeFiles(folder, _.cloneDeep(files), startProcessAgain, false);
@@ -152,18 +143,25 @@ export class MagicRenamer {
     if (files.length === 0) {
       return;
     }
-    const file = files.shift();
-    // Helpers.log(`Processing content of file: ${path.basename(file)}`)
-    const fileContent = Helpers.readFile(file);
-    this.rules.forEach(r => {
-      Helpers.log(`Checking rule ${r}`)
+    const fileAbsPath = files.shift();
+    log.d(`Processing content of file: ${path.basename(fileAbsPath)}`)
+    const fileContent = Helpers.readFile(fileAbsPath);
+
+    const rules = this.rules;
+    for (let index = 0; index < rules.length; index++) {
+      const r = rules[index];
+      log.d(`Checking rule ${r}`)
       if (r.applyTo(fileContent)) {
-        // Helpers.log(`Apply to: ${fileContent}`);
-        Helpers.writeFile(file, r.replace(fileContent, true));
+        log.d(`Write file: ${fileAbsPath}`);
+        // shouldDebug(fileAbsPath) && console.log(fileContent)
+        const replaced = r.replace(fileAbsPath, fileContent, true);
+        // shouldDebug(fileAbsPath) && console.log(replaced)
+        Helpers.writeFile(fileAbsPath, replaced);
       } else {
-        // Helpers.log(`Not apply to: ${fileContent}`);
+        log.d(`Not apply to: ${fileAbsPath}`);
       }
-    });
+    }
+
     this.changeContent(files);
   }
   //#endregion
