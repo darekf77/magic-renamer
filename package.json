@@ -1,7 +1,42 @@
 {
+  "tnp": {
+    "resources": [
+      "README.md"
+    ],
+    "overrided": {
+      "ignoreDepsPattern": [],
+      "includeAsDev": [],
+      "includeOnly": [
+        "tnp-helpers"
+      ],
+      "dependencies": {},
+      "linkedFolders": [],
+      "npmFixes": []
+    },
+    "linkedProjects": [],
+    "smartContainerBuildTarget": "",
+    "linkedRepos": [],
+    "libReleaseOptions": {
+      "nodts": false,
+      "obscure": false,
+      "ugly": false,
+      "includeNodeModules": false
+    },
+    "smartContainerTarget": "",
+    "type": "isomorphic-lib",
+    "isCoreProject": false,
+    "useFramework": false,
+    "required": [],
+    "version": "v4",
+    "isGenerated": false,
+    "requiredServers": [],
+    "license": "UNLICENSED",
+    "private": false,
+    "main": "index.js",
+    "workerPlugins": {}
+  },
   "name": "magic-renamer",
   "version": "16.0.44",
-  "main": "index.js",
   "bin": {
     "magic-renamer": "bin/magic-renamer",
     "magic-renamer-debug": "bin/magic-renamer-debug"
