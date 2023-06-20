@@ -1,37 +1,37 @@
 //#region @notForNpm
 
-// @browserLine
-    import { NgModule } from '@angular/core';
-// @browserLine
-    import { Component, OnInit } from '@angular/core';
-
 //#region @browser
-    @Component({
-      selector: 'app-magic-renamer',
-      template: 'hello from magic-renamer'
-    })
-    export class MagicRenamerComponent implements OnInit {
-      constructor() { }
+import { NgModule } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 
-      ngOnInit() { }
-    }
 
-    @NgModule({
-      imports: [],
-      exports: [MagicRenamerComponent],
-      declarations: [MagicRenamerComponent],
-      providers: [],
-    })
-    export class MagicRenamerModule { }
-    //#endregion
+@Component({
+  selector: 'app-magic-renamer',
+  template: 'hello from magic-renamer',
+  styles: [` body { margin: 0px !important; } `],
+})
+export class MagicRenamerComponent implements OnInit {
+  constructor() { }
 
-    //#region @backend
-    async function start(port: number) {
-      console.log('hello world from backend');
-    }
+  ngOnInit() { }
+}
 
-    export default start;
-
+@NgModule({
+  imports: [],
+  exports: [MagicRenamerComponent],
+  declarations: [MagicRenamerComponent],
+  providers: [],
+})
+export class MagicRenamerModule { }
 //#endregion
+
+
+async function start(port: number) {
+  console.log('hello world');
+}
+
+export default start;
+
+
 
 //#endregion

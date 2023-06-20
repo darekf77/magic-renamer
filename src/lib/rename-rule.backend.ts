@@ -45,9 +45,11 @@ export class RenameRule {
       [_.camelCase(thisFrom), _.camelCase(thisTo)],  // myEntity => helloKitty
       [_.upperFirst(_.camelCase(thisFrom)), _.upperFirst(_.camelCase(thisTo))], // MyEntity => HelloKitty
       [_.snakeCase(thisFrom), _.snakeCase(thisTo)],  // my_entity => hello_kitty
+      [_.snakeCase(thisFrom).toUpperCase(), _.snakeCase(thisTo).toUpperCase()],  // MY_ENTITY => HELLO_KITTY
       [_.startCase(thisFrom), _.startCase(thisTo)], // My Entity => Hello Kitty
       [_.upperCase(thisFrom), _.upperCase(thisTo)], // MY ENTITY => HELLO KITTY
       [_.lowerCase(thisFrom), _.lowerCase(thisTo)], // my entity => hello kitty
+      [_.camelCase(thisFrom).toLocaleLowerCase(), _.camelCase(thisTo).toLocaleLowerCase()], // myentity => hellokitty
     ];
   }
 

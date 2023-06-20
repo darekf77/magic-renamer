@@ -143,9 +143,9 @@ export class MagicRenamer {
     if (files.length === 0) {
       return;
     }
-    const fileAbsPath = files.shift();
+    const fileAbsPath = files.shift() || '';
     log.d(`Processing content of file: ${path.basename(fileAbsPath)}`)
-    const fileContent = Helpers.readFile(fileAbsPath);
+    const fileContent = Helpers.readFile(fileAbsPath) || '';
 
     const rules = this.rules;
     for (let index = 0; index < rules.length; index++) {
