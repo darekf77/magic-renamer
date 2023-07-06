@@ -106,25 +106,29 @@ export class MagicRenamer {
     if (files.length === 0) {
       return;
     }
-    let file = files.shift();
-    log.d(`Processing file: ${path.basename(file)}`)
-    const fileName = path.basename(file);
+    let fileAbsPath = files.shift();
+    log.d(`Processing file: ${path.basename(fileAbsPath)}`)
+    const fileName = path.basename(fileAbsPath);
     for (let index = 0; index < this.rules.length; index++) {
       const r = this.rules[index];
       // log.d(`Checking rule ${r}`)
       if (r.applyTo(fileName) && !r.includes(fileName)) {
         log.d(`Apply to: ${fileName}`);
         const destChangedToNewName = crossPlatformPath(path.join(
-          path.dirname(file),
+          path.dirname(fileAbsPath),
           r.replace(fileName, fileName)),
         );
-        log.d(`des ${destChangedToNewName}`);
-        if (crossPlatformPath(file) === folder) {
-          Helpers.copy(file, destChangedToNewName);
+        // console.log(`des ${destChangedToNewName}`);
+        if (crossPlatformPath(fileAbsPath) === folder) {
+          Helpers.copy(fileAbsPath, destChangedToNewName);
         } else {
-          Helpers.move(file, destChangedToNewName);
+          if (fileAbsPath !== destChangedToNewName) {
+            Helpers.move(fileAbsPath, destChangedToNewName);
+          } else {
+            console.warn(`Trying to move into same dest ${destChangedToNewName}`);
+          }
         }
-        file = destChangedToNewName;
+        fileAbsPath = destChangedToNewName;
         if (path.extname(destChangedToNewName) === '') {
           files.length = 0;
           log.d(`Starting process again from: ${destChangedToNewName}`)
