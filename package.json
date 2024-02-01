@@ -225,7 +225,7 @@
     "lodash": "4.17.20",
     "lodash-walk-object": "~16.5.10",
     "lowdb": "1.0.0",
-    "magic-renamer": "~16.5.10",
+    "magic-renamer": "~16.5.11",
     "material-design-icons": "3.0.1",
     "method-override": "2.3.10",
     "minimist": "1.2.0",
@@ -323,5 +323,5 @@
     "zone.js": "~0.13.0"
   },
   "private": false,
-  "lastBuildTagHash": "cef917fbaaee7adc748b3c6ed95a09d0e18ba910"
+  "lastBuildTagHash": "cf147247846bf5bb1b813865c6ed0668826319bf"
 }
