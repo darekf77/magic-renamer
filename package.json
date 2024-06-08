@@ -39,7 +39,7 @@
     "workerPlugins": {}
   },
   "name": "magic-renamer",
-  "version": "16.444.1",
+  "version": "16.444.2",
   "bin": {
     "magic-renamer": "bin/magic-renamer",
     "magic-renamer-debug": "bin/magic-renamer-debug"
