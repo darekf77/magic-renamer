@@ -1,13 +1,13 @@
 //#region imports
-import { Log, Level } from 'ng2-logger';
+import { Log, Level } from 'ng2-logger/src';
 const log = Log.create('magic-renemer',
   Level.__NOTHING
 )
 
 
 //#region @backend
-import { _, path, fse, glob, crossPlatformPath } from 'tnp-core';
-import { Helpers } from 'tnp-helpers';
+import { _, path, fse, glob, crossPlatformPath } from 'tnp-core/src';
+import { Helpers } from 'tnp-helpers/src';
 import { shouldDebug } from './magic-renamer-data';
 import { RenameRule } from './rename-rule.backend';
 //#endregion

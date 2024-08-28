@@ -1,4 +1,4 @@
-import { path } from "tnp-core"
+import { path } from "tnp-core/src"
 
 export const toDebug = [
   // 'lazy.module.ts'

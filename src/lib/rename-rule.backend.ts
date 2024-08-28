@@ -1,6 +1,6 @@
-import { Helpers } from 'tnp-helpers';
-import { _ } from 'tnp-core';
-import { Log, Level } from 'ng2-logger';
+import { Helpers } from 'tnp-helpers/src';
+import { _ } from 'tnp-core/src';
+import { Log, Level } from 'ng2-logger/src';
 const log = Log.create('magic-renemer',
   Level.__NOTHING
 )
