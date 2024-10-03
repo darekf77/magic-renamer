@@ -1,5 +1,5 @@
 import { Helpers } from 'tnp-helpers/src';
-import { _ } from 'tnp-core/src';
+import { _, UtilsString } from 'tnp-core/src';
 import { Log, Level } from 'ng2-logger/src';
 const log = Log.create('magic-renemer',
   Level.__NOTHING
@@ -41,6 +41,7 @@ export class RenameRule {
     const thisFrom = this.fromWhiteSpaceReplaced;
     return [
       // TODO 'rs.asdasd-asd-A.'
+      [UtilsString.kebabCaseNoSplitNumbers(thisFrom), UtilsString.kebabCaseNoSplitNumbers(thisTo)],  // my-entity => hello1-kitty
       [_.kebabCase(thisFrom), _.kebabCase(thisTo)],  // my-entity => hello-kitty
       [_.camelCase(thisFrom), _.camelCase(thisTo)],  // myEntity => helloKitty
       [_.upperFirst(_.camelCase(thisFrom)), _.upperFirst(_.camelCase(thisTo))], // MyEntity => HelloKitty
