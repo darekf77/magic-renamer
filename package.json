@@ -36,7 +36,8 @@
     "license": "UNLICENSED",
     "private": false,
     "main": "index.js",
-    "workerPlugins": {}
+    "workerPlugins": {},
+    "packageJsonOverride": {}
   },
   "name": "magic-renamer",
   "version": "18.0.20",
