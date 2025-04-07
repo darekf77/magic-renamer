@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 var { fse, crossPlatformPath, path } = require('tnp-core');
 var path = {
-  dist: path.join(crossPlatformPath(__dirname), '../dist/index.js'),
-  bundle: path.join(crossPlatformPath(__dirname), '../index.js')
+  dist: path.join(crossPlatformPath(__dirname), '../dist/cli.js'),
+  bundle: path.join(crossPlatformPath(__dirname), '../cli.js')
 }
 var p = fse.existsSync(path.dist) ? path.dist : path.bundle;
 global.globalSystemToolMode = true;
