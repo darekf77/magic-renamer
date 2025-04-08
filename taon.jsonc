@@ -5,7 +5,6 @@
 
   "autoReleaseConfigAllowedItems": [{
     "artifactName": "npm-lib-and-cli-tool",
-    "envName": "prod"
   }],
 
   "isCoreProject": false,
