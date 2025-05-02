@@ -4,10 +4,16 @@
     "strictNullChecks": false,
     "rootDir": "./src",
     "paths": {
-      "magic-renamer": [
+      "@lib": [
         "./src/lib"
       ],
-      "magic-renamer/*": [
+      "@lib/*": [
+        "./src/lib/*"
+      ],
+      "magic-renamer/src": [
+        "./src/lib"
+      ],
+      "magic-renamer/src/*": [
         "./src/lib/*"
       ]
     }
