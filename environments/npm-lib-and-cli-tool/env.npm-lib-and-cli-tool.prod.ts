@@ -6,7 +6,7 @@ const env: Partial<EnvOptions> = {
   release: {
     cli: {
       includeNodeModules: true,
-      uglify: true,
+      // uglify: true,
     },
   },
 };

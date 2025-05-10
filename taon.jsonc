@@ -3,9 +3,13 @@
   "version": "v19",
   "dependenciesNamesForNpmLib": ["tnp-helpers"],
 
-  "autoReleaseConfigAllowedItems": [{
-    "artifactName": "npm-lib-and-cli-tool",
-  }],
+  "autoReleaseConfigAllowedItems": [
+    // tnp ar --release.skipTagGitPush --release.skipResolvingGitChanges --release.skipBuildingArtifacts --release.skipNpmPublish
+    {
+      "artifactName": "npm-lib-and-cli-tool",
+      // "envName": "prod",
+    },
+  ],
 
   "isCoreProject": false,
   "resources": ["README.md"],
@@ -13,6 +17,6 @@
   "packageJsonOverride": {
     "author": "Dariusz Filipiak",
     "license": "UNLICENSED",
-    "private": false
-  }
+    "private": false,
+  },
 }
