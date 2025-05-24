@@ -1,6 +1,6 @@
 {
   "name": "magic-renamer",
-  "version": "19.0.26",
+  "version": "19.0.27",
   "scripts": {
     "taon build:lib": "taon build:lib",
     "taon build:watch:app": "taon build:watch:app",
