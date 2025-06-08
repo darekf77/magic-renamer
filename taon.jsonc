@@ -2,6 +2,7 @@
   "type": "isomorphic-lib",
   "version": "v19",
   "dependenciesNamesForNpmLib": ["tnp-helpers"],
+  "appId": "com.domain.example.magic-renamer",
 
   "autoReleaseConfigAllowedItems": [
     // tnp ar --release.skipTagGitPush --release.skipResolvingGitChanges --release.skipBuildingArtifacts --release.skipNpmPublish
@@ -18,7 +19,7 @@
     "author": "Dariusz Filipiak",
     "license": "UNLICENSED",
     "private": false,
-
-    "scripts": {}
-  },
+    "scripts": {},
+    "description": "Description for magic-renamer. Hello world!"
+  }
 }
