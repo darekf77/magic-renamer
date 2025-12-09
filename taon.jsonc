@@ -7,8 +7,10 @@
   "autoReleaseConfigAllowedItems": [
     // tnp ar --release.skipTagGitPush --release.skipResolvingGitChanges --release.skipBuildingArtifacts --release.skipNpmPublish
     {
-      "artifactName": "npm-lib-and-cli-tool",
       // "envName": "prod",
+      "artifactName": "npm-lib-and-cli-tool",
+
+      "taskName": "npm"
     },
   ],
 
