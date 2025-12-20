@@ -1,21 +1,35 @@
 //#region imports
+import * as micromatch from 'micromatch'; // @backend
 import { Log, Level } from 'ng2-logger/src';
-const log = Log.create('magic-renemer', Level.__NOTHING);
-
-//#region @backend
-import { _, path, fse, glob, crossPlatformPath } from 'tnp-core/src';
+import {
+  _,
+  path,
+  fse,
+  glob,
+  crossPlatformPath,
+  fg,
+  Utils,
+  dotTaonFolder,
+  dotTnpFolder,
+  UtilsFilesFoldersSync,
+  UtilsFilesFolders,
+} from 'tnp-core/src';
 import { Helpers } from 'tnp-helpers/src';
+
 import { shouldDebug } from './magic-renamer-data';
 import { RenameRule } from './rename-rule';
+
 //#endregion
-//#endregion
+const log = Log.create('magic-renemer', Level.__NOTHING);
 
 export class MagicRenamer {
   //#region @backend
 
   //#region singleton
   private static _instances = {};
+
   private constructor(private readonly cwd: string) {}
+
   public static Instance(cwd = process.cwd()) {
     cwd = crossPlatformPath(cwd);
     if (!MagicRenamer._instances[cwd]) {
@@ -26,13 +40,13 @@ export class MagicRenamer {
   //#endregion
 
   //#region fields
-  readonly rules: RenameRule[] = [];
+  rules: RenameRule[] = [];
   //#endregion
 
   //#region public api
 
   //#region public api / start
-  start(pArgs: string, copyIfFolder = false) {
+  start(pArgs: string) {
     const orgArgs = pArgs;
     Helpers.info('\n\n\nRebranding of files');
 
@@ -42,7 +56,11 @@ export class MagicRenamer {
     // let relativePath = _.first(pArgs.split(' '));
     // pArgs = pArgs.replace(relativePath, '');
     pArgs = decodeURIComponent(pArgs);
-    // @ts-ignore
+
+    // console.log({
+    //   pArgs
+    // })
+
     this.rules = RenameRule.from(pArgs);
 
     if (this.rules.length === 0) {
@@ -108,7 +126,20 @@ export class MagicRenamer {
         ]);
         // console.log(`des ${destChangedToNewName}`);
         if (crossPlatformPath(fileAbsPath) === folder) {
-          Helpers.copy(fileAbsPath, destChangedToNewName);
+          const filter = src => {
+            const exclude = micromatch.isMatch(
+              src,
+              UtilsFilesFoldersSync.IGNORE_FOLDERS_FILES_PATTERNS,
+              {
+                dot: true,
+              },
+            );
+            return !exclude;
+            // return !/.*node_modules.*/g.test(src);
+          };
+          Helpers.copy(fileAbsPath, destChangedToNewName, {
+            filter,
+          });
         } else {
           if (fileAbsPath !== destChangedToNewName) {
             Helpers.move(fileAbsPath, destChangedToNewName);
@@ -172,24 +203,22 @@ export class MagicRenamer {
 }
 
 //#region @backend
-function getAllFilesFoldersRecusively(folder: string, filesOnly = false) {
-  let files = glob.sync(`${folder}/**/*.*`);
-  if (!filesOnly) {
-    let dirs = [folder];
-    files.forEach(filePath => {
-      const p = crossPlatformPath(path.dirname(filePath));
-      dirs = dirs.concat(
-        fse
-          .readdirSync(p)
-          .filter(f =>
-            fse.statSync(crossPlatformPath(path.join(p, f))).isDirectory(),
-          )
-          .map(f => crossPlatformPath(path.join(p, f))),
-      );
-    });
-    files = files.concat(dirs);
-    files = Helpers.arrays.uniqArray(files);
+function getAllFilesFoldersRecusively(cwdFolder: string, filesOnly = false) {
+  const files = UtilsFilesFoldersSync.getFilesFrom(cwdFolder, {
+    recursive: true,
+    followSymlinks: false,
+    omitPatterns: UtilsFilesFoldersSync.IGNORE_FOLDERS_FILES_PATTERNS,
+  });
+
+  if (filesOnly) {
+    return [...files].sort();
   }
-  return files.sort();
+
+  const folders = UtilsFilesFoldersSync.getFoldersFrom(cwdFolder, {
+    recursive: true,
+    followSymlinks: false,
+    omitPatterns: UtilsFilesFoldersSync.IGNORE_FOLDERS_FILES_PATTERNS,
+  });
+  return Utils.uniqArray([cwdFolder, ...files, ...folders]).sort();
 }
 //#endregion
