@@ -28,12 +28,15 @@ export class MagicRenamer {
   //#region singleton
   private static _instances = {};
 
-  private constructor(private readonly cwd: string) {}
+  private constructor(
+    private readonly cwd: string,
+    private verbose: boolean,
+  ) {}
 
-  public static Instance(cwd = process.cwd()) {
+  public static Instance(cwd = process.cwd(), silent = false) {
     cwd = crossPlatformPath(cwd);
     if (!MagicRenamer._instances[cwd]) {
-      MagicRenamer._instances[cwd] = new MagicRenamer(cwd);
+      MagicRenamer._instances[cwd] = new MagicRenamer(cwd, !silent);
     }
     return MagicRenamer._instances[cwd] as MagicRenamer;
   }
@@ -43,12 +46,18 @@ export class MagicRenamer {
   rules: RenameRule[] = [];
   //#endregion
 
+  omitPatterns: string[] = UtilsFilesFoldersSync.IGNORE_FOLDERS_FILES_PATTERNS;
+
   //#region public api
 
   //#region public api / start
-  start(pArgs: string) {
+  start(pArgs: string, omitPatterns?: string[]) {
+    if (_.isUndefined(omitPatterns)) {
+      omitPatterns = UtilsFilesFoldersSync.IGNORE_FOLDERS_FILES_PATTERNS;
+    }
+    this.omitPatterns = omitPatterns;
     const orgArgs = pArgs;
-    Helpers.info('\n\n\nRebranding of files');
+    this.verbose && Helpers.info('\n\n\nRebranding of files');
 
     // let options = Helpers.cliTool.argsFrom<{}>(pArgs);
     // pArgs = Helpers.cliTool.cleanCommand(pArgs, options);
@@ -63,6 +72,10 @@ export class MagicRenamer {
 
     this.rules = RenameRule.from(pArgs);
 
+    this.verbose &&
+      console.log(`Detected rules (${this.rules.length}):
+${this.rules.map(r => r.toString()).join('\n')}`);
+
     if (this.rules.length === 0) {
       // console.log({
       //   pArgs
@@ -76,23 +89,25 @@ export class MagicRenamer {
     }
 
     let folder = this.cwd;
-    let files = getAllFilesFoldersRecusively(folder); //filter(f => crossPlatformPath(f) === folder)
-    Helpers.info(
-      `files:\n ${files.map(f => f.replace(folder, '')).join('\n')}`,
-    );
+    let files = this.getAllFilesFoldersRecusively(folder); //filter(f => crossPlatformPath(f) === folder)
+    this.verbose &&
+      Helpers.info(
+        `Detecteed files (${files.length}) in folder ${folder}:
+${files.map(f => `- ${f.replace(folder, '')}`).join('\n')}`,
+      );
 
     const starCallback = newFolder => {
       if (newFolder) {
         folder = newFolder;
       }
-      files = getAllFilesFoldersRecusively(folder);
+      files = this.getAllFilesFoldersRecusively(folder);
       this.changeFiles(folder, files, starCallback);
     };
 
     this.changeFiles(folder, files, starCallback);
-    files = getAllFilesFoldersRecusively(folder, true);
+    files = this.getAllFilesFoldersRecusively(folder, true);
     this.changeContent(files);
-    console.log('PROCESS DONE');
+    this.verbose && console.log('PROCESS DONE');
   }
   //#endregion
 
@@ -127,13 +142,9 @@ export class MagicRenamer {
         // console.log(`des ${destChangedToNewName}`);
         if (crossPlatformPath(fileAbsPath) === folder) {
           const filter = src => {
-            const exclude = micromatch.isMatch(
-              src,
-              UtilsFilesFoldersSync.IGNORE_FOLDERS_FILES_PATTERNS,
-              {
-                dot: true,
-              },
-            );
+            const exclude = micromatch.isMatch(src, this.omitPatterns, {
+              dot: true,
+            });
             return !exclude;
             // return !/.*node_modules.*/g.test(src);
           };
@@ -197,28 +208,27 @@ export class MagicRenamer {
 
     this.changeContent(files);
   }
-  //#endregion
 
-  //#endregion
-}
+  private getAllFilesFoldersRecusively(cwdFolder: string, filesOnly?: boolean) {
+    filesOnly = !!filesOnly;
+    const files = UtilsFilesFoldersSync.getFilesFrom(cwdFolder, {
+      recursive: true,
+      followSymlinks: false,
+      omitPatterns: this.omitPatterns,
+    });
 
-//#region @backend
-function getAllFilesFoldersRecusively(cwdFolder: string, filesOnly = false) {
-  const files = UtilsFilesFoldersSync.getFilesFrom(cwdFolder, {
-    recursive: true,
-    followSymlinks: false,
-    omitPatterns: UtilsFilesFoldersSync.IGNORE_FOLDERS_FILES_PATTERNS,
-  });
+    if (filesOnly) {
+      return [...files].sort();
+    }
 
-  if (filesOnly) {
-    return [...files].sort();
+    const folders = UtilsFilesFoldersSync.getFoldersFrom(cwdFolder, {
+      recursive: true,
+      followSymlinks: false,
+      omitPatterns: this.omitPatterns,
+    });
+    return Utils.uniqArray([cwdFolder, ...files, ...folders]).sort();
   }
+  //#endregion
 
-  const folders = UtilsFilesFoldersSync.getFoldersFrom(cwdFolder, {
-    recursive: true,
-    followSymlinks: false,
-    omitPatterns: UtilsFilesFoldersSync.IGNORE_FOLDERS_FILES_PATTERNS,
-  });
-  return Utils.uniqArray([cwdFolder, ...files, ...folders]).sort();
+  //#endregion
 }
-//#endregion
