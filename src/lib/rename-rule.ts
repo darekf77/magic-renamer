@@ -1,4 +1,4 @@
-import { Helpers } from 'tnp-helpers/src';
+import { Helpers, Utils } from 'tnp-core/src';
 import { _, UtilsString } from 'tnp-core/src';
 import { Log, Level } from 'ng2-logger/src';
 const log = Log.create('magic-renemer', Level.__NOTHING);
@@ -114,10 +114,10 @@ export class RenameRule {
       const v = combinations[index];
       let [from, to] = v;
       if (orgString.search(from) !== -1) {
-        const regex = new RegExp(Helpers.escapeStringForRegEx(from));
+        const regex = new RegExp(Utils.escapeStringForRegEx(from));
         log.i(`apply! "${regex.source}" to file ${fileName} => "${to}"`);
         orgString = orgString.replace(
-          new RegExp(Helpers.escapeStringForRegEx(from), 'g'),
+          new RegExp(Utils.escapeStringForRegEx(from), 'g'),
           to,
         );
         if (!replaceallPossibliliteis) {

@@ -14,7 +14,7 @@ import {
   UtilsFilesFoldersSync,
   UtilsFilesFolders,
 } from 'tnp-core/src';
-import { Helpers } from 'tnp-helpers/src';
+import { Helpers } from 'tnp-core/src';
 
 import { shouldDebug } from './magic-renamer-data';
 import { RenameRule } from './rename-rule';
@@ -148,12 +148,12 @@ ${files.map(f => `- ${f.replace(folder, '')}`).join('\n')}`,
             return !exclude;
             // return !/.*node_modules.*/g.test(src);
           };
-          Helpers.copy(fileAbsPath, destChangedToNewName, {
+          UtilsFilesFoldersSync.copy(fileAbsPath, destChangedToNewName, {
             filter,
           });
         } else {
           if (fileAbsPath !== destChangedToNewName) {
-            Helpers.move(fileAbsPath, destChangedToNewName);
+            UtilsFilesFoldersSync.move(fileAbsPath, destChangedToNewName);
           } else {
             console.warn(
               `Trying to move into same dest ${destChangedToNewName}`,

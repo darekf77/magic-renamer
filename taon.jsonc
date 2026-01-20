@@ -1,7 +1,7 @@
 {
   "type": "isomorphic-lib",
   "version": "v21",
-  "dependenciesNamesForNpmLib": ["tnp-helpers"],
+  "dependenciesNamesForNpmLib": ["micromatch"],
   "appId": "com.domain.example.magic-renamer",
 
   "autoReleaseConfigAllowedItems": [
@@ -10,11 +10,13 @@
       // "envName": "prod",
       "artifactName": "npm-lib-and-cli-tool",
 
-      "taskName": "npm"
+      "taskName": "npm",
     },
   ],
 
   "isCoreProject": false,
+  "isomorphicDependenciesForNpmLib": ["ng2-logger", "tnp-core"],
+  "peerDependenciesNamesForNpmLib": [],
   "resources": ["README.md"],
 
   "packageJsonOverride": {
@@ -22,6 +24,6 @@
     "description": "Description for magic-renamer. Hello world!",
     "license": "UNLICENSED",
     "private": false,
-    "scripts": {}
-  }
+    "scripts": {},
+  },
 }
