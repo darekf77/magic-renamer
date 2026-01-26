@@ -13,6 +13,7 @@
       "envName": "prod",
       "artifactName": "npm-lib-and-cli-tool",
       "taskName": "cli",
+      "releaseType": "local"
     },
   ],
 
