@@ -5,12 +5,14 @@
   "appId": "com.domain.example.magic-renamer",
 
   "autoReleaseConfigAllowedItems": [
-    // tnp ar --release.skipTagGitPush --release.skipResolvingGitChanges --release.skipBuildingArtifacts --release.skipNpmPublish
     {
-      // "envName": "prod",
       "artifactName": "npm-lib-and-cli-tool",
-
       "taskName": "npm",
+    },
+    {
+      "envName": "prod",
+      "artifactName": "npm-lib-and-cli-tool",
+      "taskName": "cli",
     },
   ],
 
