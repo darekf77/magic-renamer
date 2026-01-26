@@ -10,10 +10,10 @@
       "taskName": "npm",
     },
     {
-      "envName": "prod",
       "artifactName": "npm-lib-and-cli-tool",
-      "taskName": "cli",
-      "releaseType": "local"
+      "envName": "prod",
+      "releaseType": "local",
+      "taskName": "cli"
     },
   ],
 
