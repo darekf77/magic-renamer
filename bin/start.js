@@ -7,11 +7,11 @@ process.removeAllListeners('warning');
 
 const fs = require('fs');
 const path = require('path');
-var pathDist = {
-  dist: path.join(__dirname, '../dist/cli.js'),
-  bundle: path.join(__dirname, '../cli.js')
+var pathToCliJS = {
+  distDev: path.join(__dirname, '../dist/cli.js'),
+  localOrNPm: path.join(__dirname, '../cli.js')
 }
-var p = fs.existsSync(pathDist.dist) ? pathDist.dist : path.bundle;
+var p = fs.existsSync(pathToCliJS.distDev) ? pathToCliJS.distDev : pathToCliJS.localOrNPm;
 global.globalSystemToolMode = true;
 var run = require(p).start;
 run(process.argv.slice(2));
