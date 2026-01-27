@@ -1,6 +1,6 @@
 {
   "name": "magic-renamer",
-  "version": "21.0.30",
+  "version": "21.0.34",
   "scripts": {
     "taon init": "taon init",
     "taon start": "taon start",
@@ -444,6 +444,7 @@
   },
   "bin": {
     "magic-renamer": "bin/magic-renamer",
-    "magic-renamer-debug": "bin/magic-renamer-debug"
+    "magic-renamer-debug": "bin/magic-renamer-debug",
+    "magic-renamer-debug-brk": "bin/magic-renamer-debug-brk"
   }
 }

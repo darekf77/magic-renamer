@@ -15,7 +15,6 @@
     "Thumbs.db": true,
     "browser": true,
     "websql": true,
-    "eslint-rules": true,
     "dist-prod": true,
     "dist-nocutsrc": true,
     "dist-nocutsrc-prod": true,
