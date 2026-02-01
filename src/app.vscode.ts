@@ -11,8 +11,8 @@ export const commands: CommandType[] = (
       group: null,
       title: 'MAGIC RENAME',
       exec: params => {
-        console.log(params);
-        const firstSelected =
+        console.log(params); // @ts-ignore
+        const firstSelected = // @ts-ignore
           params.selectedUris.length > 0 && _.first(params.selectedUris).path;
         const selectedCwd = firstSelected
           ? crossPlatformPath(firstSelected)
