@@ -34,5 +34,9 @@
     "license": "UNLICENSED",
     "private": false,
     "scripts": {},
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/darekf77/magic-renamer.git",
+    },
   },
 }
