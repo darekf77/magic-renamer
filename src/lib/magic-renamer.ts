@@ -85,7 +85,7 @@ ${this.rules.map(r => r.toString()).join('\n')}`);
       <command> 'my-module -> my-new-modules'
       your args: "${orgArgs}"
 
-      `);
+      `,false,true);
     }
 
     let folder = this.cwd;

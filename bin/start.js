@@ -14,4 +14,4 @@ var pathToCliJS = {
 var p = fs.existsSync(pathToCliJS.distDev) ? pathToCliJS.distDev : pathToCliJS.localOrNPm;
 global.globalSystemToolMode = true;
 var run = require(p).start;
-run(process.argv.slice(2));
+run(process.argv,__filename);
