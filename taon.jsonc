@@ -13,13 +13,13 @@
       "artifactName": "npm-lib-and-cli-tool",
       "envName": "prod",
       "releaseType": "local",
-      "taskName": "cli-prod"
+      "taskName": "cli-prod-local"
     },
     {
       "artifactName": "npm-lib-and-cli-tool",
       "envName": "dev",
       "releaseType": "local",
-      "taskName": "cli"
+      "taskName": "cli-local"
     },
   ],
 
