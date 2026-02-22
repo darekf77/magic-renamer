@@ -20,7 +20,7 @@ import { shouldDebug } from './magic-renamer-data';
 import { RenameRule } from './rename-rule';
 
 //#endregion
-const log = Log.create('magic-renemer', Level.__NOTHING);
+const log = Log.create('magic-renemer');
 
 export class MagicRenamer {
   //#region @backend
@@ -136,7 +136,7 @@ ${files.map(f => `- ${f.replace(folder, '')}`).join('\n')}`,
           rule.replace({
             fileName,
             orgString: fileName,
-            replaceallPossibliliteis: false,
+            replaceAllPossibilities: false,
           }),
         ]);
         // console.log(`des ${destChangedToNewName}`);
@@ -197,7 +197,7 @@ ${files.map(f => `- ${f.replace(folder, '')}`).join('\n')}`,
         const replaced = r.replace({
           fileName: fileAbsPath,
           orgString: fileContent,
-          replaceallPossibliliteis: true,
+          replaceAllPossibilities: true,
         });
         // shouldDebug(fileAbsPath) && console.log(replaced)
         Helpers.writeFile(fileAbsPath, replaced);

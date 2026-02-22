@@ -1,7 +1,7 @@
+import { Log, Level } from 'ng2-logger/src';
 import { Helpers, Utils } from 'tnp-core/src';
 import { _, UtilsString } from 'tnp-core/src';
-import { Log, Level } from 'ng2-logger/src';
-const log = Log.create('magic-renemer', Level.__NOTHING);
+const log = Log.create('magic-renemer');
 
 export class RenameRule {
   static from(pArgs: string): RenameRule[] {
@@ -30,7 +30,9 @@ export class RenameRule {
   }
 
   public readonly fromWhiteSpaceReplaced: string;
+
   public readonly toWhiteSpaceReplaced: string;
+
   constructor(
     public readonly from: string,
     public readonly to: string,
@@ -51,35 +53,81 @@ export class RenameRule {
 
   includes(orgString) {
     return !_.isUndefined(
-      this.combinations.find(v => {
+      this.combinationsData(true).combinationsAll.find(v => {
         const [from, to] = v;
         return orgString === to;
       }),
     );
   }
 
-  get combinations() {
+  combinationsData(getAll = false): {
+    isWeakFrom: boolean;
+    combinationsAll?: string[][];
+    combinationsInClass?: string[][];
+    combinationsInTemplate?: string[][];
+  } {
     const thisTo = this.toWhiteSpaceReplaced;
     const thisFrom = this.fromWhiteSpaceReplaced;
-    return [
-      // TODO 'rs.asdasd-asd-A.'
-      [
-        UtilsString.kebabCaseNoSplitNumbers(thisFrom),
-        UtilsString.kebabCaseNoSplitNumbers(thisTo),
-      ], // my-entity => hello1-kitty
-      [_.kebabCase(thisFrom), _.kebabCase(thisTo)], // my-entity => hello-kitty
-      [_.camelCase(thisFrom), _.camelCase(thisTo)], // myEntity => helloKitty
-      [_.upperFirst(_.camelCase(thisFrom)), _.upperFirst(_.camelCase(thisTo))], // MyEntity => HelloKitty
-      [_.snakeCase(thisFrom), _.snakeCase(thisTo)], // my_entity => hello_kitty
-      [_.snakeCase(thisFrom).toUpperCase(), _.snakeCase(thisTo).toUpperCase()], // MY_ENTITY => HELLO_KITTY
-      [_.startCase(thisFrom), _.startCase(thisTo)], // My Entity => Hello Kitty
-      [_.upperCase(thisFrom), _.upperCase(thisTo)], // MY ENTITY => HELLO KITTY
-      [_.lowerCase(thisFrom), _.lowerCase(thisTo)], // my entity => hello kitty
-      [
-        _.camelCase(thisFrom).toLocaleLowerCase(),
-        _.camelCase(thisTo).toLocaleLowerCase(),
-      ], // myentity => hellokitty
-    ];
+
+    /**
+     * Example: thisFrom === 'entity'; thisTo => 'entity-new'
+     * - we are not sure if 'entity' alone should be 'entity-new' or 'entityNew'
+     */
+    const isWeakFrom = _.kebabCase(thisFrom).split('-').length <= 1;
+
+    if (isWeakFrom && !getAll) {
+      return {
+        isWeakFrom,
+        combinationsInTemplate: [
+          [_.upperCase(thisFrom), _.snakeCase(thisTo).toUpperCase()], // ENTITY => HELLO_KITTY
+          [
+            _.upperFirst(_.camelCase(thisFrom)),
+            _.upperFirst(_.camelCase(thisTo)),
+          ], // Entity => HelloKitty
+          ['"' + _.camelCase(thisFrom) + '.', '"' + _.camelCase(thisTo) + '.'], // entity => helloKitty
+          [
+            UtilsString.kebabCaseNoSplitNumbers(thisFrom),
+            UtilsString.kebabCaseNoSplitNumbers(thisTo),
+          ], // entity1 => hello1-kitty
+        ],
+        combinationsInClass: [
+          [
+            _.upperFirst(_.camelCase(thisFrom)),
+            _.upperFirst(_.camelCase(thisTo)),
+          ], // Entity => HelloKitty
+          [_.upperCase(thisFrom), _.snakeCase(thisTo).toUpperCase()], // MY ENTITY => HELLO_KITTY
+          [_.camelCase(thisFrom), _.camelCase(thisTo)], // entity => helloKitty
+        ],
+      };
+    }
+    return {
+      isWeakFrom: false,
+      combinationsAll: [
+        // TODO 'rs.asdasd-asd-A.'
+        [
+          UtilsString.kebabCaseNoSplitNumbers(thisFrom),
+          UtilsString.kebabCaseNoSplitNumbers(thisTo),
+        ], // my-entity => hello1-kitty
+        [_.kebabCase(thisFrom), _.kebabCase(thisTo)], // my-entity => hello-kitty
+        [_.camelCase(thisFrom), _.camelCase(thisTo)], // myEntity => helloKitty
+        [
+          _.upperFirst(_.camelCase(thisFrom)),
+          _.upperFirst(_.camelCase(thisTo)),
+        ], // MyEntity => HelloKitty
+        [_.snakeCase(thisFrom), _.snakeCase(thisTo)], // my_entity => hello_kitty
+        [
+          _.snakeCase(thisFrom).toUpperCase(),
+          _.snakeCase(thisTo).toUpperCase(),
+        ], // MY_ENTITY => HELLO_KITTY
+        [_.startCase(thisFrom), _.startCase(thisTo)], // My Entity => Hello Kitty
+        [_.upperCase(thisFrom), _.upperCase(thisTo)], // MY ENTITY => HELLO KITTY
+        [_.lowerCase(thisFrom), _.lowerCase(thisTo)], // my entity => hello kitty
+        [
+          _.camelCase(thisFrom).toLocaleLowerCase(),
+          _.camelCase(thisTo).toLocaleLowerCase(),
+        ], // myentity => hellokitty
+      ],
+    };
   }
 
   /**
@@ -89,15 +137,14 @@ export class RenameRule {
   replaceInString(orgString: string): string {
     return this.replace({
       orgString,
-      replaceallPossibliliteis: true,
+      replaceAllPossibilities: true,
     });
   }
 
   /**
    *
    * @param orgString (file name OR file content)
-   * @param replaceallPossibliliteis when changin file notent (not name only)
-   * @returns
+   * @param replaceAllPossibilities when changing file notent (not name only)
    */
   replace(options: {
     /**
@@ -105,26 +152,61 @@ export class RenameRule {
      */
     fileName?: string;
     orgString: string;
-    replaceallPossibliliteis?: boolean;
+    replaceAllPossibilities?: boolean;
   }) {
-    let { fileName, orgString, replaceallPossibliliteis } = options;
-    replaceallPossibliliteis = !!replaceallPossibliliteis;
-    const combinations = this.combinations;
-    for (let index = 0; index < combinations.length; index++) {
-      const v = combinations[index];
-      let [from, to] = v;
-      if (orgString.search(from) !== -1) {
-        const regex = new RegExp(Utils.escapeStringForRegEx(from));
-        log.i(`apply! "${regex.source}" to file ${fileName} => "${to}"`);
-        orgString = orgString.replace(
-          new RegExp(Utils.escapeStringForRegEx(from), 'g'),
-          to,
-        );
-        if (!replaceallPossibliliteis) {
-          return orgString;
+    let { fileName, orgString, replaceAllPossibilities } = options;
+    replaceAllPossibilities = !!replaceAllPossibilities;
+    const combinationsData = this.combinationsData();
+    if (combinationsData.isWeakFrom) {
+      const lines = orgString.split('\n');
+      for (let lineIndex = 0; lineIndex < lines.length; lineIndex++) {
+        const line = lines[lineIndex];
+
+        let combinations = combinationsData.combinationsInTemplate;
+        if (line.includes('inject(')) {
+          // QUICK_FIX for component class variables
+          combinations = combinationsData.combinationsInClass;
+        }
+
+        for (
+          let combinationIndex = 0;
+          combinationIndex < combinations.length;
+          combinationIndex++
+        ) {
+          let [from, to] = combinations[combinationIndex];
+          // console.log({ from, to });
+
+          lines[lineIndex] = lines[lineIndex].replace(
+            new RegExp(Utils.escapeStringForRegEx(from), 'g'),
+            to,
+          );
+        }
+      }
+      orgString = lines.join('\n');
+    } else {
+      const combinations = combinationsData.combinationsAll;
+      for (
+        let combinationIndex = 0;
+        combinationIndex < combinations.length;
+        combinationIndex++
+      ) {
+        const combination = combinations[combinationIndex];
+        let [from, to] = combination;
+        if (orgString.search(from) !== -1) {
+          const regex = new RegExp(Utils.escapeStringForRegEx(from));
+          log.i(`apply! "${regex.source}" to file ${fileName} => "${to}"`);
+          orgString = orgString.replace(
+            new RegExp(Utils.escapeStringForRegEx(from), 'g'),
+            to,
+          );
+
+          if (!replaceAllPossibilities) {
+            return orgString;
+          }
         }
       }
     }
+
     return orgString;
   }
 }
