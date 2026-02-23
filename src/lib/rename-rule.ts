@@ -1,7 +1,7 @@
 import { Log, Level } from 'ng2-logger/src';
 import { Helpers, Utils } from 'tnp-core/src';
 import { _, UtilsString } from 'tnp-core/src';
-const log = Log.create('magic-renemer');
+const log = Log.create('rename-rule', Level.WARN, Level.ERROR);
 
 export class RenameRule {
   static from(pArgs: string): RenameRule[] {

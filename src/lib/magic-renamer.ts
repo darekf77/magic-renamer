@@ -20,7 +20,7 @@ import { shouldDebug } from './magic-renamer-data';
 import { RenameRule } from './rename-rule';
 
 //#endregion
-const log = Log.create('magic-renemer');
+const log = Log.create('magic-renemer', Level.WARN, Level.ERROR);
 
 export class MagicRenamer {
   //#region @backend
@@ -80,12 +80,16 @@ ${this.rules.map(r => r.toString()).join('\n')}`);
       // console.log({
       //   pArgs
       // })
-      Helpers.error(`[magic-renamer] Please provide rules:
+      Helpers.error(
+        `[magic-renamer] Please provide rules:
       example:
       <command> 'my-module -> my-new-modules'
       your args: "${orgArgs}"
 
-      `,false,true);
+      `,
+        false,
+        true,
+      );
     }
 
     let folder = this.cwd;
