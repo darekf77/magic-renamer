@@ -155,6 +155,11 @@ export class RenameRule {
     replaceAllPossibilities?: boolean;
   }) {
     let { fileName, orgString, replaceAllPossibilities } = options;
+    if (typeof orgString !== 'string') {
+      Helpers.log({ orgString });
+      Helpers.warn(`[magic-renamer][not a string] fielname ${fileName}`);
+      return orgString;
+    }
     replaceAllPossibilities = !!replaceAllPossibilities;
     const combinationsData = this.combinationsData();
     if (combinationsData.isWeakFrom) {
