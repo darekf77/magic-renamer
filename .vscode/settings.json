@@ -185,7 +185,7 @@
   "tslint.alwaysShowRuleFailuresAsWarnings": false,
   "prettier.endOfLine": "auto",
   "prettier.prettierPath": "./node_modules/prettier",
-  "window.title": "npm/taon-dev/magic-renamer  [ ${activeEditorShort} ]",
+  "window.title": "taon-dev/magic-renamer () [ ${activeEditorShort}]",
   "search.useIgnoreFiles": false,
 
   "search.include": [
