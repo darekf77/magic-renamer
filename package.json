@@ -1,6 +1,6 @@
 {
   "name": "magic-renamer",
-  "version": "21.0.86",
+  "version": "21.0.83",
   "scripts": {
     "taon init": "taon init",
     "taon start": "taon start",
