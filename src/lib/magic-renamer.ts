@@ -1,5 +1,4 @@
 //#region imports
-import * as micromatch from 'micromatch'; // @backend
 import { Log, Level } from 'ng2-logger/src';
 import {
   _,
@@ -130,6 +129,7 @@ ${files.map(f => `- ${f.replace(folder, '')}`).join('\n')}`,
     let fileAbsPath = files.shift();
     log.d(`Processing file: ${path.basename(fileAbsPath)}`);
     const fileName = path.basename(fileAbsPath);
+    const micromatch = require('micromatch');
     for (let index = 0; index < this.rules.length; index++) {
       const rule = this.rules[index];
       // log.d(`Checking rule ${r}`)

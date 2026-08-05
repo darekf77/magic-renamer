@@ -83,7 +83,12 @@
     ".idea": true,
     "webpack.*": true,
     ".eslintrc*": true,
-    "tslint.*": true
+    "tslint.*": true,
+    "*.i18n.data.ts": true,
+    "**/*.i18n.data.ts": true,
+    "vitest.config.ts": true,
+    "**/vitest.config.ts": true,
+    "!templates-subprojects/**/package.json": true
   },
 
   "workbench.colorCustomizations": {
@@ -233,7 +238,9 @@
   "javascript.suggest.autoImports": false,
 
   "files.associations": {
-    "tsconfig.json": "json"
+    "tsconfig.json": "plaintext",
+    "**/tsconfig.json": "plaintext",
+    "**/tsconfig.*.json": "plaintext"
   },
 
   "search.followSymlinks": false
